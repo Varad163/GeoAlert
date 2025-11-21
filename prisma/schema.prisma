@@ -1,0 +1,126 @@
+
+
+datasource db {
+  provider = "postgresql"
+
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id           String    @id @default(cuid())
+  name         String?
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(USER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  alerts       Alert[]            @relation("AdminAlerts")
+  statuses     UserStatus[]
+  messages     AdminMessage[]     @relation("AdminMessages")
+  chatSessions ChatSession[]      @relation("UserChatSessions")
+  chatMessages ChatMessage[]      @relation("UserChatMessages")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+
+model Alert {
+  id          String        @id @default(cuid())
+  type        AlertType
+  severity    AlertSeverity
+  description String
+  createdAt   DateTime      @default(now())
+  expiresAt   DateTime?
+  createdById String
+
+  createdBy User        @relation("AdminAlerts", fields: [createdById], references: [id])
+  zones     AlertZone[]
+}
+
+enum AlertType {
+  FLOOD
+  FIRE
+  ACCIDENT
+  ROADBLOCK
+  WEATHER
+  OTHER
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+
+model AlertZone {
+  id        String   @id @default(cuid())
+  alertId   String
+  polygon   Json     // polygon coordinates array
+  createdAt DateTime @default(now())
+
+  alert Alert @relation(fields: [alertId], references: [id])
+}
+
+
+model SafeZone {
+  id        String   @id @default(cuid())
+  name      String
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+}
+
+
+model UserStatus {
+  id          String   @id @default(cuid())
+  userId      String
+  isSafe      Boolean  @default(false)
+  lastUpdated DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user     User          @relation("UserChatSessions", fields: [userId], references: [id])
+  messages ChatMessage[]
+}
+
+// Chat messages between user & admin
+model ChatMessage {
+  id          String     @id @default(cuid())
+  sessionId   String
+  senderId    String
+  senderRole  Role
+  message     String
+  createdAt   DateTime   @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id])
+  sender  User        @relation("UserChatMessages", fields: [senderId], references: [id])
+}
+
+
+model AdminMessage {
+  id        String   @id @default(cuid())
+  senderId  String
+  message   String
+  createdAt DateTime @default(now())
+
+  sender User @relation("AdminMessages", fields: [senderId], references: [id])
+}
