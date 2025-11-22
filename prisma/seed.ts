@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +12,7 @@ async function main() {
     create: {
       email: "varad@123.io",
       name: "Varad",
-      passwordHash,
+      passwordHash: passwordHash, // matches schema
       role: "ADMIN",
     },
   });
@@ -22,7 +22,8 @@ async function main() {
 
 main()
   .then(() => prisma.$disconnect())
-  .catch((e) => {
+  .catch(async (e) => {
     console.error(e);
-    prisma.$disconnect();
+    await prisma.$disconnect();
+    process.exit(1);
   });

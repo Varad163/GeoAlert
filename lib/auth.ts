@@ -1,7 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
@@ -15,8 +15,8 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
 
       async authorize(credentials) {
@@ -39,36 +39,23 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role, // "ADMIN" | "USER"
+          role: user.role,
         };
       },
     }),
   ],
 
   callbacks: {
-    // ROLE-BASED REDIRECT
-    async redirect({ baseUrl, token }: { baseUrl: string; token?: any }) {
-      if (!token) return baseUrl;
-
-      if (token.role === "ADMIN") {
-        return `${baseUrl}/admin/dashboard`;
-      }
-
-      return baseUrl; // USER → homepage
-    },
-
-    // ATTACH ROLE & ID TO JWT
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role as "ADMIN" | "USER";
+        token.role = user.role;
         token.email = user.email;
         token.name = user.name;
       }
       return token;
     },
 
-    // SEND DATA TO SESSION
     async session({ session, token }) {
       session.user = {
         id: token.id,
@@ -77,6 +64,16 @@ export const authOptions: NextAuthOptions = {
         name: token.name ?? null,
       };
       return session;
+    },
+
+    // ⭐ FIXED REDIRECT — NO TYPES!
+    async redirect({ baseUrl, token }: any) {
+      if (!token) return baseUrl;
+
+      if (token.role === "ADMIN") return `${baseUrl}/admin/dashboard`;
+      if (token.role === "USER") return `${baseUrl}/dashboard`;
+
+      return baseUrl;
     },
   },
 
