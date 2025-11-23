@@ -11,15 +11,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
-    setLoading(true);
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      callbackUrl: "/dashboard",
-    });
-    setLoading(false);
+  setLoading(true);
+
+  const res = await signIn("credentials", {
+    email,
+    password,
+    redirect: false, // ⛔ STOP auto redirect
+  });
+
+  setLoading(false);
+
+  if (!res || res.error) {
+    alert("Invalid credentials");
+    return;
   }
+
+  // 🔥 Now fetch session to get the user role
+  const sessionRes = await fetch("/api/auth/session");
+  const session = await sessionRes.json();
+
+  if (session?.user?.role === "ADMIN") {
+    router.push("/admin/dashboard");
+  } else {
+    router.push("/dashboard");
+  }
+}
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">
