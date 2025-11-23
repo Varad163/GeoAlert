@@ -120,3 +120,16 @@
     @apply bg-background text-foreground;
   }
 }
+.hero-gradient {
+  background: radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 182, 255, 0.4),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(166, 140, 255, 0.35),
+      transparent 60%
+    ),
+    linear-gradient(to bottom right, #f3e7ff, #ffffff);
+}
