@@ -50,11 +50,7 @@ export default function CreateAlertPage() {
       <h1 className="text-3xl font-bold">Create New Alert</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow">
-        <input
-          className="border p-2 w-full"
-          placeholder="Alert Title"
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      
 
         <div className="grid grid-cols-2 gap-4">
           <select className="border p-2" onChange={(e) => setType(e.target.value)}>
