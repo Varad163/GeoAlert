@@ -1,59 +1,77 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bell, MessageCircle, Shield, MapPin } from "lucide-react";
+import Link from "next/link";
 
 export default function UserDashboard() {
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col gap-6">
-      <h1 className="text-3xl font-semibold">User Dashboard</h1>
+    <div className="min-h-screen bg-gray-100 p-6 space-y-8">
+      <h1 className="text-4xl font-bold">Welcome User 👋</h1>
 
-      {/* Alerts Section */}
-      <Card className="rounded-2xl shadow p-4">
-        <CardContent className="flex items-center gap-4">
-          <Bell className="w-10 h-10" />
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold">Active Alerts</h2>
-            <p className="text-gray-600 text-sm">View real-time disaster alerts in your area.</p>
-          </div>
-          <Button>View Alerts</Button>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        {/* Alerts Card */}
+        <Link href="/alerts">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white">
+            <CardContent className="flex items-center gap-6">
+              <Bell className="w-16 h-16 text-blue-600" />
+              <div className="flex-1">
+                <h2 className="text-2xl font-semibold">Active Alerts</h2>
+                <p className="text-gray-600 text-md mt-1">
+                  View real-time alerts and danger zones in your area.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
-      {/* Chat Section */}
-      <Card className="rounded-2xl shadow p-4">
-        <CardContent className="flex items-center gap-4">
-          <MessageCircle className="w-10 h-10" />
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold">Chat With Admin</h2>
-            <p className="text-gray-600 text-sm">Ask questions or request help directly.</p>
-          </div>
-          <Button>Open Chat</Button>
-        </CardContent>
-      </Card>
+        {/* Chat Card */}
+        <Link href="/user/chat">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white">
+            <CardContent className="flex items-center gap-6">
+              <MessageCircle className="w-16 h-16 text-green-600" />
+              <div className="flex-1">
+                <h2 className="text-2xl font-semibold">Chat With Admin</h2>
+                <p className="text-gray-600 text-md mt-1">
+                  Ask questions or request immediate support.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
-      {/* Safe Status */}
-      <Card className="rounded-2xl shadow p-4">
-        <CardContent className="flex items-center gap-4">
-          <Shield className="w-10 h-10" />
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold">Your Safety Status</h2>
-            <p className="text-gray-600 text-sm">Update or view whether you're safe.</p>
-          </div>
-          <Button>Update Status</Button>
-        </CardContent>
-      </Card>
+        {/* Safe Status */}
+        <Link href="/user/safe-status">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white">
+            <CardContent className="flex items-center gap-6">
+              <Shield className="w-16 h-16 text-purple-600" />
+              <div className="flex-1">
+                <h2 className="text-2xl font-semibold">Your Safety Status</h2>
+                <p className="text-gray-600 text-md mt-1">
+                  Update whether you’re safe during emergencies.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
-      {/* Safe Zones */}
-      <Card className="rounded-2xl shadow p-4">
-        <CardContent className="flex items-center gap-4">
-          <MapPin className="w-10 h-10" />
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold">Nearby Safe Zones</h2>
-            <p className="text-gray-600 text-sm">Find safe locations around you.</p>
-          </div>
-          <Button>View Map</Button>
-        </CardContent>
-      </Card>
+        {/* Safe Zones */}
+        <Link href="/safe-zones">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white">
+            <CardContent className="flex items-center gap-6">
+              <MapPin className="w-16 h-16 text-red-600" />
+              <div className="flex-1">
+                <h2 className="text-2xl font-semibold">Nearby Safe Zones</h2>
+                <p className="text-gray-600 text-md mt-1">
+                  Locate safe shelters and emergency locations.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
     </div>
   );
 }
