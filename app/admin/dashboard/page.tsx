@@ -63,7 +63,7 @@ export default function AdminDashboard() {
           icon={<Megaphone className="w-14 h-14 text-gray-700" />}
           title="Post New Alert"
           desc="Broadcast important notifications instantly."
-          href="/admin/alerts/new"
+          href="/admin/alerts/create"
         />
 
         <DashboardCard
