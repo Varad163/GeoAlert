@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 
 export default function UserMap({ alerts }: any) {
   useEffect(() => {
-    // Remove previous map
+    
     const oldMap = (L as any).map?.instances?.find(
       (m: any) => m._container.id === "userAlertsMap"
     );
@@ -15,10 +15,8 @@ export default function UserMap({ alerts }: any) {
 
     const map = L.map("userAlertsMap").setView([18.5204, 73.8567], 12);
 
-    // Tile layer
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-    // Render polygons
     alerts.forEach((alert: any) => {
       alert.zones.forEach((zone: any) => {
         const layer = L.polygon(

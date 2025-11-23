@@ -26,7 +26,6 @@ export default function LoginPage() {
     return;
   }
 
-  // 🔥 Now fetch session to get the user role
   const sessionRes = await fetch("/api/auth/session");
   const session = await sessionRes.json();
 

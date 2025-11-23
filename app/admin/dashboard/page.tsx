@@ -35,7 +35,6 @@ export default function AdminDashboard() {
         </Button>
       </header>
 
-      {/* Profile Section */}
       <section className="mt-8 bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-black/10">
         <div className="flex items-center gap-6">
           <UserCog className="w-20 h-20 text-gray-700" />

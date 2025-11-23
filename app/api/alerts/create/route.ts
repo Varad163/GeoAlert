@@ -19,7 +19,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create Alert entry
     const alert = await prisma.alert.create({
       data: {
         description,
@@ -30,7 +29,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Create Polygon Zone
     await prisma.alertZone.create({
       data: {
         alertId: alert.id,
