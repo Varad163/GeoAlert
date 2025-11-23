@@ -9,7 +9,7 @@ export default function AdminSafetyStatusPage() {
   async function loadData() {
     const res = await fetch("/api/admin/status/list");
     const data = await res.json();
-    setList(data.statuses);
+    setList(data.statuses || []);
   }
 
   useEffect(() => {
@@ -17,10 +17,10 @@ export default function AdminSafetyStatusPage() {
   }, []);
 
   return (
-    <div className="p-6 hero-gradient min-h-screen">
+    <div className="p-6 min-h-screen bg-gray-50">   {/* CLEAN BACKGROUND */}
       <h1 className="text-3xl font-bold mb-6">User Safety Overview</h1>
 
-      <div className="bg-white/80 backdrop-blur rounded-xl shadow p-6">
+      <div className="bg-white rounded-xl shadow p-6">
         <table className="w-full border-collapse">
           <thead>
             <tr className="text-left border-b">
@@ -32,6 +32,14 @@ export default function AdminSafetyStatusPage() {
           </thead>
 
           <tbody>
+            {list.length === 0 && (
+              <tr>
+                <td colSpan={4} className="p-4 text-center text-gray-500">
+                  No safety updates yet.
+                </td>
+              </tr>
+            )}
+
             {list.map((s: any) => (
               <tr key={s.id} className="border-b hover:bg-gray-50">
                 <td className="p-3 font-medium">{s.user.name}</td>

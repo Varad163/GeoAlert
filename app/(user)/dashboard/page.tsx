@@ -1,20 +1,19 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Bell, MessageCircle, Shield, MapPin } from "lucide-react";
 import Link from "next/link";
 
 export default function UserDashboard() {
   return (
-    <div className="min-h-screen p-6 space-y-8 bg-white">   {/* updated */}
+    <div className="min-h-screen p-6 space-y-8 bg-gray-50">
       <h1 className="text-4xl font-bold">Welcome User 👋</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         
         {/* Alerts Card */}
         <Link href="/alerts">
-          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white/80 backdrop-blur">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition cursor-pointer bg-white">
             <CardContent className="flex items-center gap-6">
               <Bell className="w-16 h-16 text-blue-600" />
               <div className="flex-1">
@@ -29,7 +28,7 @@ export default function UserDashboard() {
 
         {/* Chat Card */}
         <Link href="/user/chat">
-          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white/80 backdrop-blur">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition cursor-pointer bg-white">
             <CardContent className="flex items-center gap-6">
               <MessageCircle className="w-16 h-16 text-green-600" />
               <div className="flex-1">
@@ -44,7 +43,7 @@ export default function UserDashboard() {
 
         {/* Safe Status */}
         <Link href="/dashboard/safety">
-          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white/80 backdrop-blur">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition cursor-pointer bg-white">
             <CardContent className="flex items-center gap-6">
               <Shield className="w-16 h-16 text-purple-600" />
               <div className="flex-1">
@@ -59,7 +58,7 @@ export default function UserDashboard() {
 
         {/* Safe Zones */}
         <Link href="/safe-zones">
-          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer bg-white/80 backdrop-blur">
+          <Card className="rounded-3xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition cursor-pointer bg-white">
             <CardContent className="flex items-center gap-6">
               <MapPin className="w-16 h-16 text-red-600" />
               <div className="flex-1">
