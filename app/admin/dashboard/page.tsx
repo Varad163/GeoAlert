@@ -83,7 +83,7 @@ export default function AdminDashboard() {
           icon={<Users className="w-14 h-14 text-gray-700" />}
           title="User Reports"
           desc="Review reports submitted by users."
-          href="/admin/reports"
+          href="/admin/safety-status"
         />
 
         <DashboardCard
