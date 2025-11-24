@@ -20,7 +20,6 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen p-8 bg-white">
 
-      {/* Top Bar */}
       <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-5 rounded-2xl shadow-lg border border-black/10">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-800">
           Admin Dashboard
@@ -36,7 +35,6 @@ export default function AdminDashboard() {
         </Button>
       </header>
 
-      {/* Profile Section */}
       <section className="mt-8 bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-black/10">
         <div className="flex items-center gap-6">
           <UserCog className="w-20 h-20 text-gray-700" />
@@ -57,7 +55,6 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* Dashboard Grid */}
       <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
 
         <DashboardCard
@@ -81,7 +78,6 @@ export default function AdminDashboard() {
           href="/admin/active-alerts"
         />
 
-        {/* ✅ NEW CHAT FEATURE CARD */}
         <DashboardCard
           icon={<MessageCircle className="w-14 h-14 text-gray-700" />}
           title="User Chat"

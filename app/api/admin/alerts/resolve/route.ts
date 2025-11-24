@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   await prisma.alert.update({
     where: { id },
     data: {
-      expiresAt: new Date(), // instantly expire
+      expiresAt: new Date(), 
     },
   });
 

@@ -5,7 +5,7 @@ export async function GET() {
   const alerts = await prisma.alert.findMany({
     where: {
       expiresAt: {
-        gt: new Date(), // Only active alerts
+        gt: new Date(),
       },
     },
     orderBy: { createdAt: "desc" },
