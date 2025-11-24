@@ -1,7 +1,7 @@
 "use client";
 
-import Sidebar from "@/components/admin/Sidebar";
-import Footer from "@/components/admin/footer";
+import Sidebar from "@/app/components/admin/Sidebar";
+import Footer from "@/app/components/admin/footer";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (

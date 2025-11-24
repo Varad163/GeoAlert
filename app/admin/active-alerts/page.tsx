@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/app/components/ui/card";
+import { Button } from "@/app/components/ui/button";
 import { AlertTriangle, Clock } from "lucide-react";
 
 type AlertSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";

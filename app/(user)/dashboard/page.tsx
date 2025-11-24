@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/app/components/ui/card";
 import { Bell, MessageCircle, Shield, MapPin } from "lucide-react";
 import Link from "next/link";
 
@@ -27,7 +27,7 @@ export default function UserDashboard() {
         </Link>
 
         {/* Chat Card */}
-        <Link href="/components/chat/user-chat">
+        <Link href="/chat/user">
           <Card className="rounded-3xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition cursor-pointer bg-white">
             <CardContent className="flex items-center gap-6">
               <MessageCircle className="w-16 h-16 text-green-600" />

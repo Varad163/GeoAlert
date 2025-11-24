@@ -1,10 +1,10 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/app/components/ui/card";
+import { Button } from "@/app/components/ui/button";
 import { MapPin, PlusCircle, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import{ CreateSafeZoneModal } from "@/components/CreateSafeZoneModal";
+import{ CreateSafeZoneModal } from "@/app/components/CreateSafeZoneModal";
 
 export default function ManageSafeZonesPage() {
   const [zones, setZones] = useState<any[]>([]);

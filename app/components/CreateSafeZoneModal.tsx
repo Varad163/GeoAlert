@@ -2,8 +2,8 @@
 
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/app/components/ui/card";
+import { Button } from "@/app/components/ui/button";
 import { MapPin, PlusCircle } from "lucide-react";
 import { MapPicker } from "./MapPicker";
 
