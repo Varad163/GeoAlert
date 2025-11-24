@@ -1,6 +1,7 @@
 "use client";
-import dynamic from "next/dynamic";
+
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
 const SafeZoneMap = dynamic(() => import("./SafeZoneMap"), {
   ssr: false,
@@ -10,22 +11,17 @@ export default function UserSafeZonesPage() {
   const [zones, setZones] = useState([]);
 
   useEffect(() => {
-    async function loadZones() {
-      const res = await fetch("/api/safe-zones");
+    async function load() {
+      const res = await fetch("/api/safe-zones/list");
       const data = await res.json();
-      setZones(data.zones || []);
+      console.log("Safe zones loaded:", data.zones); // debug
+      setZones(data.zones);
     }
-    loadZones();
+    load();
   }, []);
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold mb-4">Nearby Safe Zones 🟢</h1>
-      <p className="text-gray-600 mb-6">
-        These are safe locations marked by your city administrators.
-      </p>
-
-      {/* Map */}
+    <div style={{ height: "100vh", width: "100%" }}>
       <SafeZoneMap zones={zones} />
     </div>
   );
