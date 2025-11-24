@@ -27,7 +27,7 @@ export default function UserDashboard() {
         </Link>
 
         {/* Chat Card */}
-        <Link href="/user/chat">
+        <Link href="/components/chat/user-chat">
           <Card className="rounded-3xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition cursor-pointer bg-white">
             <CardContent className="flex items-center gap-6">
               <MessageCircle className="w-16 h-16 text-green-600" />
