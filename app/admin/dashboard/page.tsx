@@ -10,7 +10,7 @@ import {
   LogOut,
   ShieldCheck,
   UserCog,
-  MessageCircle,   // ✅ NEW ICON
+  MessageCircle,   
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
