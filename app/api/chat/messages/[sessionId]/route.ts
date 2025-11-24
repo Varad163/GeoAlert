@@ -24,7 +24,7 @@ export async function GET(
   } catch (err) {
     console.error("GET MESSAGES ERROR:", err);
     return NextResponse.json(
-      { error: "Server error" },
+      { error: "server error" },
       { status: 500 }
     );
   }
