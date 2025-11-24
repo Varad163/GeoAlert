@@ -10,6 +10,7 @@ import {
   LogOut,
   ShieldCheck,
   UserCog,
+  MessageCircle,   // ✅ NEW ICON
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
   const { data: session } = useSession();
 
   return (
-    <div className="min-h-screen p-8 bg-white"> {/*  <-- gradient removed */}
+    <div className="min-h-screen p-8 bg-white">
 
       {/* Top Bar */}
       <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-5 rounded-2xl shadow-lg border border-black/10">
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
         </Button>
       </header>
 
+      {/* Profile Section */}
       <section className="mt-8 bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-black/10">
         <div className="flex items-center gap-6">
           <UserCog className="w-20 h-20 text-gray-700" />
@@ -77,6 +79,14 @@ export default function AdminDashboard() {
           title="Active Alerts"
           desc="Monitor and manage current alerts."
           href="/admin/alerts"
+        />
+
+        {/* ✅ NEW CHAT FEATURE CARD */}
+        <DashboardCard
+          icon={<MessageCircle className="w-14 h-14 text-gray-700" />}
+          title="User Chat"
+          desc="Chat with users in real-time and respond to emergencies."
+          href="/admin/chat"
         />
 
         <DashboardCard
