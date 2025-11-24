@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           icon={<AlertTriangle className="w-14 h-14 text-gray-700" />}
           title="Active Alerts"
           desc="Monitor and manage current alerts."
-          href="/admin/alerts"
+          href="/admin/active-alerts"
         />
 
         {/* ✅ NEW CHAT FEATURE CARD */}
