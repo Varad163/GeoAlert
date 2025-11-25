@@ -39,11 +39,11 @@ export default function AdminChat() {
     });
 
     socket.on("new_message", (msg) => {
-      // update only if active chat is same session
+ 
       if (active && msg.sessionId === active.id) {
         setMessages((prev) => [...prev, msg]);
       }
-      // update session ordering
+  
       loadSessions();
     });
 
@@ -51,9 +51,7 @@ export default function AdminChat() {
       socket?.disconnect();
       socket = null;
     };
-  }, [active]); // rejoin room on active change
-
-  // Open a session
+  }, [active]); 
   async function openSession(session: any) {
     setActive(session);
 
