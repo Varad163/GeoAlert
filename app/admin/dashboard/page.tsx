@@ -96,7 +96,7 @@ export default function AdminDashboard() {
           icon={<ShieldCheck className="w-14 h-14 text-gray-700" />}
           title="System Status"
           desc="Review system health and activity logs."
-          href="/admin/system"
+          href="/admin/system-status"
         />
 
       </section>
