@@ -1,8 +1,25 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  // 🚨 Redirect logged-in users away from landing page
+  useEffect(() => {
+    if (!session?.user) return;
+
+    if (session.user.role === "ADMIN") {
+      router.replace("/admin/dashboard");
+    } else {
+      router.replace("/dashboard");
+    }
+  }, [session]);
+
   return (
     <div className="min-h-screen bg-gray-50 text-black">
 
@@ -47,7 +64,6 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-
       {/* FEATURE SECTION */}
       <section id="features" className="px-8 md:px-20 py-20 bg-white">
         <h2 className="text-4xl font-extrabold text-center mb-12">
@@ -55,12 +71,10 @@ export default function LandingPage() {
         </h2>
 
         <div className="grid md:grid-cols-3 gap-10">
-
           <div className="p-6 border-2 border-black rounded-2xl bg-gray-50 hover:shadow-xl transition">
             <h3 className="text-2xl font-bold mb-3">⚡ Real-Time Alerts</h3>
             <p className="text-gray-700">
-              Get instant disaster warnings: floods, fires, storms,
-              earthquakes, and more.
+              Get instant disaster warnings: floods, fires, storms, earthquakes, and more.
             </p>
           </div>
 
@@ -77,16 +91,12 @@ export default function LandingPage() {
               Authorities can post, manage, and broadcast emergency alerts.
             </p>
           </div>
-
         </div>
       </section>
 
-
-      {/* CALL TO ACTION */}
+      {/* CTA */}
       <section className="px-8 md:px-20 py-20 text-center">
-        <h2 className="text-4xl font-extrabold mb-6">
-          Ready to Stay Alert?
-        </h2>
+        <h2 className="text-4xl font-extrabold mb-6">Ready to Stay Alert?</h2>
         <p className="text-gray-700 max-w-xl mx-auto mb-8">
           Join thousands of users who trust GeoAlert during emergencies.
         </p>
@@ -98,7 +108,6 @@ export default function LandingPage() {
         </a>
       </section>
 
-
       {/* FOOTER */}
       <footer className="py-8 text-center text-gray-500 border-t border-black/10">
         © {new Date().getFullYear()} GeoAlert — Stay Safe. Stay Alert.
@@ -106,4 +115,3 @@ export default function LandingPage() {
     </div>
   );
 }
-// end

@@ -1,41 +1,53 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🚨 Prevent logged-in users from viewing login page
+  useEffect(() => {
+    if (!session?.user) return;
+
+    if (session.user.role === "ADMIN") {
+      router.replace("/admin/dashboard");
+    } else {
+      router.replace("/dashboard");
+    }
+  }, [session]);
+
   async function handleLogin() {
-  setLoading(true);
+    setLoading(true);
 
-  const res = await signIn("credentials", {
-    email,
-    password,
-    redirect: false,
-  });
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-  setLoading(false);
+    setLoading(false);
 
-  if (!res || res.error) {
-    alert("Invalid credentials");
-    return;
+    if (!res || res.error) {
+      alert("Invalid credentials");
+      return;
+    }
+
+    const sessionRes = await fetch("/api/auth/session");
+    const ses = await sessionRes.json();
+
+    if (ses?.user?.role === "ADMIN") {
+      router.push("/admin/dashboard");
+    } else {
+      router.push("/dashboard");
+    }
   }
-
-  const sessionRes = await fetch("/api/auth/session");
-  const session = await sessionRes.json();
-
-  if (session?.user?.role === "ADMIN") {
-    router.push("/admin/dashboard");
-  } else {
-    router.push("/dashboard");
-  }
-}
-
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const [form, setForm] = useState({
     name: "",
@@ -13,6 +15,17 @@ export default function RegisterPage() {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // 🚨 Prevent logged-in users from opening register page
+  useEffect(() => {
+    if (!session?.user) return;
+
+    if (session.user.role === "ADMIN") {
+      router.replace("/admin/dashboard");
+    } else {
+      router.replace("/dashboard");
+    }
+  }, [session]);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -42,7 +55,6 @@ export default function RegisterPage() {
         onSubmit={handleRegister}
         className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-black/10"
       >
-        {/* FAINT BLACK HEADING */}
         <h1 className="text-3xl font-extrabold text-center mb-6 tracking-wide text-black/60">
           Create Account
         </h1>
@@ -51,23 +63,21 @@ export default function RegisterPage() {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-3 border-2 border-black text-black rounded-xl placeholder-black focus:border-black focus:ring-0 transition"
+            className="w-full p-3 border-2 border-black text-black rounded-xl placeholder-black"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
-
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 border-2 border-black text-black rounded-xl placeholder-black focus:border-black focus:ring-0 transition"
+            className="w-full p-3 border-2 border-black text-black rounded-xl placeholder-black"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
-
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-3 border-2 border-black text-black rounded-xl placeholder-black focus:border-black focus:ring-0 transition"
+            className="w-full p-3 border-2 border-black text-black rounded-xl placeholder-black"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
@@ -76,7 +86,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-6 w-full p-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-900 transition active:scale-95"
+          className="mt-6 w-full p-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-900 transition"
         >
           {loading ? "Creating..." : "Register"}
         </button>
