@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  { params }: { params: { sessionId: string } }
+  context: { params: { sessionId: string } }
 ) {
   try {
-    const sessionId = params.sessionId;
+    const sessionId = context.params.sessionId;
 
     if (!sessionId) {
       return NextResponse.json(
@@ -21,11 +21,9 @@ export async function GET(
     });
 
     return NextResponse.json({ messages });
+
   } catch (err) {
     console.error("GET MESSAGES ERROR:", err);
-    return NextResponse.json(
-      { error: "server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "server error" }, { status: 500 });
   }
 }

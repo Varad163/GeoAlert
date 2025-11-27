@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// USER creates/gets their chat session
 export async function POST(req: Request) {
   try {
     const { userId } = await req.json();
@@ -30,20 +29,26 @@ export async function POST(req: Request) {
   }
 }
 
-// ADMIN get all sessions
 export async function GET() {
   try {
     const sessions = await prisma.chatSession.findMany({
       orderBy: { updatedAt: "desc" },
-      include: { user: true },
+      select: {
+        id: true,        // <-- THIS WAS MISSING
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json({ sessions });
   } catch (err) {
-    console.error("SESSION GET ERROR:", err);
-    return NextResponse.json(
-      { error: "server error" },
-      { status: 500 }
-    );
+    console.error("❌ GET SESSIONS ERROR:", err);
+    return NextResponse.json({ error: "server error" }, { status: 500 });
   }
 }

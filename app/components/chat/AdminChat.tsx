@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
@@ -12,23 +12,26 @@ export default function AdminChat() {
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
 
-  // Load all chat sessions
+  // Safe getter to avoid undefined errors
+  const getSessionId = (obj: any) =>
+    obj?.id ?? obj?.sessionId ?? obj?.Id ?? null;
+
+  // Load sessions
   async function loadSessions() {
     try {
       const res = await fetch("/api/chat/session");
       if (!res.ok) {
-        console.error("❌ Failed to load sessions", await res.text());
+        console.error("Failed sessions", await res.text());
         return;
       }
-
       const data = await res.json();
       setSessions(Array.isArray(data.sessions) ? data.sessions : []);
     } catch (err) {
-      console.error("❌ Sessions GET error:", err);
+      console.error("Session GET error:", err);
     }
   }
 
-  // Initial mount: load sessions + connect socket
+  // Connect to socket + load sessions
   useEffect(() => {
     loadSessions();
 
@@ -39,11 +42,12 @@ export default function AdminChat() {
     });
 
     socket.on("new_message", (msg) => {
- 
-      if (active && msg.sessionId === active.id) {
+      const activeId = getSessionId(active);
+
+      if (activeId && msg.sessionId === activeId) {
         setMessages((prev) => [...prev, msg]);
       }
-  
+
       loadSessions();
     });
 
@@ -51,11 +55,21 @@ export default function AdminChat() {
       socket?.disconnect();
       socket = null;
     };
-  }, [active]); 
-  async function openSession(session: any) {
-    setActive(session);
+  }, [active]);
 
-    const res = await fetch(`/api/chat/messages/${session.id}`);
+  // Open chat session
+  async function openSession(session: any) {
+    const sessionId = getSessionId(session);
+
+    if (!sessionId) {
+      console.error("❌ Bad session object:", session);
+      return;
+    }
+
+    setActive(session);
+    console.log("Opening session:", sessionId);
+
+    const res = await fetch(`/api/chat/messages/${sessionId}`);
     if (!res.ok) {
       console.error("❌ Failed to load messages:", await res.text());
       return;
@@ -64,17 +78,17 @@ export default function AdminChat() {
     const data = await res.json();
     setMessages(Array.isArray(data.messages) ? data.messages : []);
 
-    // join room
-    socket?.emit("join", { sessionId: session.id });
+    socket?.emit("join", { sessionId });
   }
 
-  // Send a message as admin
+  // Send message
   function sendMessage() {
-    if (!active || !text.trim() || !socket) return;
+    const sessionId = getSessionId(active);
+    if (!sessionId || !text.trim() || !socket) return;
 
     socket.emit("send_message", {
-      sessionId: active.id,
-      senderId: "ADMIN", // Replace with real admin ID if needed
+      sessionId,
+      senderId: "ADMIN",
       senderRole: "ADMIN",
       message: text.trim(),
     });
@@ -85,33 +99,34 @@ export default function AdminChat() {
   return (
     <div className="flex h-full gap-4">
 
-      {/* Sessions list */}
+      {/* Sessions */}
       <div className="w-1/4 border-r p-2 overflow-auto">
         <h2 className="font-semibold text-lg mb-2">User Sessions</h2>
 
-        {sessions.length === 0 && (
-          <p className="text-gray-500 text-sm">No active chats.</p>
-        )}
+        {sessions.map((s) => {
+          const sid = getSessionId(s);
+          const activeId = getSessionId(active);
 
-        {sessions.map((s) => (
-          <div
-            key={s.id}
-            onClick={() => openSession(s)}
-            className={`p-3 cursor-pointer rounded ${
-              active?.id === s.id ? "bg-blue-100" : "hover:bg-gray-100"
-            }`}
-          >
-            <div className="font-semibold">
-              {s.user?.name || s.user?.email || "User"}
+          return (
+            <div
+              key={sid}
+              onClick={() => openSession(s)}
+              className={`p-3 cursor-pointer rounded ${
+                activeId === sid ? "bg-blue-100" : "hover:bg-gray-100"
+              }`}
+            >
+              <div className="font-semibold">
+                {s.user?.name || s.user?.email || "User"}
+              </div>
+              <div className="text-xs text-gray-500">
+                {new Date(s.updatedAt).toLocaleString()}
+              </div>
             </div>
-            <div className="text-xs text-gray-500">
-              {new Date(s.updatedAt).toLocaleString()}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Chat window */}
+      {/* Chat Window */}
       <div className="flex-1 flex flex-col">
 
         {/* Messages */}
@@ -140,12 +155,12 @@ export default function AdminChat() {
             ))
           ) : (
             <p className="text-gray-400 text-center mt-10">
-              Select a user session to start chatting.
+              Select a session to start chatting.
             </p>
           )}
         </div>
 
-        {/* Input box */}
+        {/* Input */}
         {active && (
           <div className="p-4 flex gap-2 border-t">
             <input

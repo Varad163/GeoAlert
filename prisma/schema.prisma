@@ -19,12 +19,10 @@ model User {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
-  // Relations
   alerts       Alert[]            @relation("AdminAlerts")
   statuses     UserStatus[]
   messages     AdminMessage[]     @relation("AdminMessages")
   chatSessions ChatSession[]      @relation("UserChatSessions")
-  chatMessages ChatMessage[]      @relation("UserChatMessages")
 }
 
 enum Role {
@@ -104,16 +102,16 @@ model ChatSession {
 
 // Chat messages between user & admin
 model ChatMessage {
-  id          String     @id @default(cuid())
+  id          String        @id @default(cuid())
   sessionId   String
-  senderId    String
+  senderId    String?       // OPTIONAL
   senderRole  Role
   message     String
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime      @default(now())
 
-  session ChatSession @relation(fields: [sessionId], references: [id])
-  sender  User        @relation("UserChatMessages", fields: [senderId], references: [id])
+  session     ChatSession   @relation(fields: [sessionId], references: [id])
 }
+
 
 
 model AdminMessage {
