@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "socket": "ts-node --transpile-only --skip-project --compiler-options '{\"module\":\"CommonJS\"}' server/socketServer.ts"
   },
   "dependencies": {
