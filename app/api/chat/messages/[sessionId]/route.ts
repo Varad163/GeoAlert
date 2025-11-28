@@ -1,18 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  req: Request,
-  context: { params: { sessionId: string } }
-) {
+export async function GET(req: Request, context: { params: Promise<{ sessionId: string }> }) {
   try {
-    const sessionId = context.params.sessionId;
+    const { sessionId } = await context.params; // ✅ FIX: await params
 
     if (!sessionId) {
-      return NextResponse.json(
-        { error: "sessionId required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "sessionId required" }, { status: 400 });
     }
 
     const messages = await prisma.chatMessage.findMany({
@@ -21,7 +15,6 @@ export async function GET(
     });
 
     return NextResponse.json({ messages });
-
   } catch (err) {
     console.error("GET MESSAGES ERROR:", err);
     return NextResponse.json({ error: "server error" }, { status: 500 });

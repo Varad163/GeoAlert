@@ -73,7 +73,7 @@ export default function AdminChat() {
     if (!res.ok) {
       console.error("❌ Failed to load messages:", await res.text());
       return;
-    }
+  }
 
     const data = await res.json();
     setMessages(Array.isArray(data.messages) ? data.messages : []);
