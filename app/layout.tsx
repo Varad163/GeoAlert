@@ -4,8 +4,6 @@ import "./globals.css";
 import Providers from "@/app/components/Providers";
 import "leaflet/dist/leaflet.css";
 
-
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,6 +17,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "GeoAlert - Stay Safe. Stay Alert.",
   description: "Real-time disaster alerts and emergency updates",
+
+  // ✅ Add your icon here
+  icons: {
+    icon: "/Geoalertimg.ico", // Or "/myicon.png" or "/logo.svg"
+    shortcut: "/Geoalertimg.ico",
+    apple: "/Geoalertimg.ico",
+  },
 };
 
 export default function RootLayout({
@@ -28,9 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>

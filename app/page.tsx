@@ -9,7 +9,6 @@ export default function LandingPage() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  // 🚨 Redirect logged-in users away from landing page
   useEffect(() => {
     if (!session?.user) return;
 

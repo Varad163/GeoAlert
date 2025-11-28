@@ -100,17 +100,19 @@ model ChatSession {
   messages ChatMessage[]
 }
 
-// Chat messages between user & admin
 model ChatMessage {
-  id          String        @id @default(cuid())
+  id          String     @id @default(cuid())
   sessionId   String
-  senderId    String?       // OPTIONAL
+  senderId    String?     // userId if user, null if admin
   senderRole  Role
   message     String
-  createdAt   DateTime      @default(now())
+  createdAt   DateTime   @default(now())
 
-  session     ChatSession   @relation(fields: [sessionId], references: [id])
+  session ChatSession @relation(fields: [sessionId], references: [id])
 }
+npx ts-node server/socketServer.ts
+
+
 
 
 

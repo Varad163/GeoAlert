@@ -1,43 +1,71 @@
-// server/socketServer.ts
 import dotenv from "dotenv";
 dotenv.config();
 
 import http from "http";
 import express from "express";
+import cors from "cors";
 import { Server } from "socket.io";
-import { prisma } from "../lib/prisma";  // use your singleton client
+import { prisma } from "../lib/prisma";
 
 const app = express();
 
-const PORT = process.env.SOCKET_PORT ? Number(process.env.SOCKET_PORT) : 4000;
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
 
+const PORT = Number(process.env.SOCKET_PORT) || 4000;
+
+// 🔥 CREATE HTTP SERVER
 const server = http.createServer(app);
 
+// 🔥 ATTACH SOCKET.IO TO SERVER
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
+// 🔥 SOCKET CONNECTION HANDLER
 io.on("connection", (socket) => {
-  console.log("Socket connected:", socket.id);
+  console.log("🟢 Socket connected:", socket.id);
 
+  // Join Room
   socket.on("join", ({ sessionId }) => {
-    if (sessionId) socket.join(sessionId);
+    socket.join(sessionId);
+    console.log(`🔵 User joined session: ${sessionId}`);
   });
 
-  socket.on("send_message", async ({ sessionId, senderId, senderRole, message }) => {
-    const saved = await prisma.chatMessage.create({
-      data: { sessionId, senderId, senderRole, message },
-    });
+  // Send Message
+  socket.on("send_message", async (msg) => {
+    try {
+      // Save message to DB
+      const saved = await prisma.chatMessage.create({
+        data: {
+          sessionId: msg.sessionId,
+          senderId: msg.senderId,
+          senderRole: msg.senderRole,
+          message: msg.message,
+        },
+      });
 
-    io.to(sessionId).emit("new_message", saved);
+      // Emit to room
+      io.to(msg.sessionId).emit("new_message", saved);
+
+    } catch (err) {
+      console.error("❌ ERROR saving message:", err);
+    }
   });
 
-  socket.on("disconnect", () => console.log("Socket disconnected:", socket.id));
+  // Disconnect
+  socket.on("disconnect", () => {
+    console.log("🔴 Socket disconnected:", socket.id);
+  });
 });
 
-server.listen(PORT, () => {
-  console.log(`Socket server running on port ${PORT}`);
+// 🔥 START SERVER (IMPORTANT)
+server.listen(PORT, "localhost", () => {
+  console.log(`🚀 Socket.IO Server running at http://localhost:${PORT}`);
 });

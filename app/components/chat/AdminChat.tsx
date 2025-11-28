@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
+import { useSession } from "next-auth/react";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
+const SOCKET_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
 let socket: ReturnType<typeof io> | null = null;
 
 export default function AdminChat() {
+  const { data: session } = useSession(); // 🔥 get logged-in admin session
+  const adminId = session?.user?.id; // 🔥 REAL senderId
+
   const [sessions, setSessions] = useState<any[]>([]);
   const [active, setActive] = useState<any | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
 
-  // Safe getter to avoid undefined errors
+  // Safe getter
   const getSessionId = (obj: any) =>
     obj?.id ?? obj?.sessionId ?? obj?.Id ?? null;
 
@@ -31,7 +36,7 @@ export default function AdminChat() {
     }
   }
 
-  // Connect to socket + load sessions
+  // Connect socket + load sessions
   useEffect(() => {
     loadSessions();
 
@@ -41,15 +46,13 @@ export default function AdminChat() {
       console.log("🟢 Admin socket connected:", socket?.id);
     });
 
-    socket.on("new_message", (msg) => {
-      const activeId = getSessionId(active);
+   socket.on("new_message", (msg) => {
+  setMessages((prev) => {
+    if (prev.some((m) => m.id === msg.id)) return prev;
+    return [...prev, msg];
+  });
+});
 
-      if (activeId && msg.sessionId === activeId) {
-        setMessages((prev) => [...prev, msg]);
-      }
-
-      loadSessions();
-    });
 
     return () => {
       socket?.disconnect();
@@ -73,7 +76,7 @@ export default function AdminChat() {
     if (!res.ok) {
       console.error("❌ Failed to load messages:", await res.text());
       return;
-  }
+    }
 
     const data = await res.json();
     setMessages(Array.isArray(data.messages) ? data.messages : []);
@@ -81,24 +84,43 @@ export default function AdminChat() {
     socket?.emit("join", { sessionId });
   }
 
-  // Send message
-  function sendMessage() {
-    const sessionId = getSessionId(active);
-    if (!sessionId || !text.trim() || !socket) return;
+async function sendMessage() {
+  if (!active || !text.trim()) return;
 
-    socket.emit("send_message", {
-      sessionId,
+  const clean = text.trim();
+
+  // 1️⃣ SAVE MESSAGE IN DATABASE
+  const res = await fetch("/api/chat/message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sessionId: active.id,
       senderId: "ADMIN",
-      senderRole: "ADMIN",
-      message: text.trim(),
-    });
+      senderRole: "ADMIN",   // ✅ IMPORTANT
+      message: clean,
+    }),
+  });
 
-    setText("");
+  const json = await res.json();
+  if (!json.success) {
+    console.error("Failed to save admin message", json);
+    return;
   }
+
+  // 2️⃣ SEND OVER SOCKET
+  socket?.emit("send_message", {
+    sessionId: active.id,
+    senderId: "ADMIN",
+    senderRole: "ADMIN",
+    message: clean,
+  });
+
+  setText("");
+}
+
 
   return (
     <div className="flex h-full gap-4">
-
       {/* Sessions */}
       <div className="w-1/4 border-r p-2 overflow-auto">
         <h2 className="font-semibold text-lg mb-2">User Sessions</h2>
@@ -128,7 +150,6 @@ export default function AdminChat() {
 
       {/* Chat Window */}
       <div className="flex-1 flex flex-col">
-
         {/* Messages */}
         <div className="flex-1 overflow-auto p-4">
           {active ? (

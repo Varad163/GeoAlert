@@ -14,9 +14,7 @@ export default function UserChat({ userId }: { userId: string }) {
 
   useEffect(() => {
     async function init() {
-      // -----------------------------------------
-      // 1) CREATE / GET SESSION
-      // -----------------------------------------
+ 
       try {
         const r = await fetch("/api/chat/session", {
           method: "POST",
@@ -38,9 +36,6 @@ export default function UserChat({ userId }: { userId: string }) {
         const session = json.session;
         setSessionId(session.id);
 
-        // -----------------------------------------
-        // 2) LOAD OLD MESSAGES
-        // -----------------------------------------
         const msgRes = await fetch(`/api/chat/messages/${session.id}`);
         if (msgRes.ok) {
           const data = await msgRes.json();
@@ -50,9 +45,6 @@ export default function UserChat({ userId }: { userId: string }) {
           setMessages([]);
         }
 
-        // -----------------------------------------
-        // 3) CONNECT SOCKET.IO
-        // -----------------------------------------
         socket = io(SOCKET_URL, { withCredentials: true });
 
         socket.on("connect", () => {
@@ -60,9 +52,14 @@ export default function UserChat({ userId }: { userId: string }) {
           socket?.emit("join", { sessionId: session.id });
         });
 
-        socket.on("new_message", (msg: any) => {
-          setMessages((prev) => [...prev, msg]);
-        });
+       socket.on("new_message", (msg: any) => {
+  setMessages((prev) => {
+
+    if (prev.some((m) => m.id === msg.id)) return prev;
+    return [...prev, msg];
+  });
+});
+
 
       } catch (err) {
         console.error("❌ CHAT INIT ERROR:", err);
@@ -79,14 +76,12 @@ export default function UserChat({ userId }: { userId: string }) {
     };
   }, [userId]);
 
-  // Scroll to bottom when messages update
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // -----------------------------------------
-  // SEND MESSAGE
-  // -----------------------------------------
+
+
   async function sendMessage() {
     if (!text.trim() || !sessionId || !socket) return;
 
@@ -99,37 +94,62 @@ export default function UserChat({ userId }: { userId: string }) {
 
     setText("");
   }
+return (
+  <div className="flex flex-col h-full bg-gradient-to-b from-gray-50 to-gray-100">
 
-  return (
-    <div className="flex flex-col h-full">
-      {/* Messages */}
-      <div className="flex-1 overflow-auto p-4">
-        {messages.map((m) => (
-          <div key={m.id} className={`mb-3 ${m.senderRole === "USER" ? "text-right" : "text-left"}`}>
-            <div className="inline-block bg-gray-200 p-2 rounded">{m.message}</div>
-            <div className="text-xs text-gray-400 mt-1">
-              {new Date(m.createdAt).toLocaleTimeString()}
-            </div>
-          </div>
-        ))}
-        <div ref={bottomRef} />
+    <div className="px-4 py-3 bg-white shadow flex items-center gap-3 sticky top-0 z-20">
+      <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+        U
       </div>
-
-      {/* Input */}
-      <div className="p-4 flex gap-2 border-t">
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className="flex-1 border rounded p-2"
-          placeholder="Type a message..."
-        />
-        <button
-          onClick={sendMessage}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Send
-        </button>
+      <div>
+        <h2 className="font-semibold text-lg">Support Chat</h2>
+        <p className="text-xs text-green-600">Admin is online</p>
       </div>
     </div>
-  );
+
+    <div className="flex-1 overflow-auto p-4 space-y-4">
+      {messages.map((m) => {
+        const isUser = m.senderRole === "USER";
+
+        return (
+          <div
+            key={m.id}
+            className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`
+                max-w-[70%] px-4 py-2 rounded-2xl shadow 
+                ${isUser ? "bg-blue-600 text-white rounded-br-none" 
+                         : "bg-white text-gray-800 rounded-bl-none"}
+              `}
+            >
+              <p className="text-sm">{m.message}</p>
+              <p className="text-[10px] opacity-80 mt-1">
+                {new Date(m.createdAt).toLocaleTimeString()}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+
+      <div ref={bottomRef} />
+    </div>
+
+    <div className="backdrop-blur bg-white/80 border-t px-4 py-3 flex items-center gap-3 sticky bottom-0">
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        className="flex-1 border border-gray-300 rounded-full px-4 py-2 shadow-sm outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Type a message..."
+      />
+      <button
+        onClick={sendMessage}
+        className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow transition"
+      >
+        Send
+      </button>
+    </div>
+
+  </div>
+);
 }
